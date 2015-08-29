@@ -179,7 +179,7 @@ class SlackNotificationGenerator
       end
     extras = [issues, commit[:authors].join(', '), time].compact.join(', ')
     if commit[:message].length > 50
-      commit[:message] = commit[:message][0, 47] + "..."
+      commit[:message] = commit[:message][0, 50] + "..."
     end
     <<-eos
       #{link} #{commit[:message]} [#{extras}]
