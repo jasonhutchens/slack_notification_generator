@@ -76,29 +76,32 @@ def format(commit)
   link =
     if commit[:pull]
       if ENV['SLACK_REPO']
-        "<[#{ENV['SLACK_REPO']}/pull/#{commit[:pull]}|##{commit[:pull]}>"
+        "<#{ENV['SLACK_REPO']}/pull/#{commit[:pull]}|##{commit[:pull]}>"
       else
         "##{commit[:pull]}"
       end
     else
       if ENV['SLACK_REPO']
-        "<[#{ENV['SLACK_REPO']}/commit/#{commit[:hash]}|##{commit[:hash]}>"
+        "<#{ENV['SLACK_REPO']}/commit/#{commit[:hash]}|##{commit[:hash]}>"
       else
         "##{commit[:hash]}"
       end
     end
   issues =
-    commit[:issues].map do |issue|
-      if ENV['SLACK_JIRA']
-        "<[#{ENV['SLACK_JIRA']}/browse/#{issue}|#{issue}"
-      else
-        issue
-      end
-    end.join(', ')
-  issues ||= "(no issues)"
+    if commit[:issues].empty?
+      nil
+    else
+      commit[:issues].map do |issue|
+        if ENV['SLACK_JIRA']
+          "<#{ENV['SLACK_JIRA']}/browse/#{issue}|#{issue}>"
+        else
+          issue
+        end
+      end.join(', ')
+    end
   time =
     if commit[:times].empty?
-      "(no time)"
+      nil
     else
       seconds =
         commit[:times].map do |data|
@@ -106,9 +109,12 @@ def format(commit)
         end.reduce(:+)
       ChronicDuration.output(seconds)
     end
+  extras = [issues, commit[:authors].join(', '), time].compact.join(', ')
+  if commit[:message].length > 50
+    commit[:message] = commit[:message][0, 47] + "..."
+  end
   <<-eos
-    #{commit[:date]} _#{commit[:message]}_ (#{link})
-    #{issues} | #{commit[:authors].join(', ')} | #{time}
+    #{link} #{commit[:message]} [#{extras}]
   eos
 end
 
@@ -175,4 +181,4 @@ payload =
     attachments: attachments
   }
 
-puts payload.to_json
+`curl -X POST --data-urlencode 'payload=#{payload.to_json}' #{ENV['SLACK_HOOK']}`
