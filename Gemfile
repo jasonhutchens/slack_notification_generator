@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'chronic_duration', '~> 0.10'
+
 group :development do
   gem 'yard', '~> 0.8'
   gem 'rdoc', '~> 4.1'
