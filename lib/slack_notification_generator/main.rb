@@ -1,9 +1,13 @@
 #!/usr/bin/env ruby
 
+require 'chronic_duration'
 require 'date'
 require 'json'
 
-# TODO: fail unless ENV['SLACK_HOOK'] is defined
+unless ENV['SLACK_HOOK']
+  puts 'you must define the "SLACK_HOOK" environment variable'
+  exit 1
+end
 
 env =
   case ENV['CI_BRANCH']
@@ -19,12 +23,10 @@ env =
 
 changelog = []
 
-# get the most recent tag in the current branch
 this_tag = 'HEAD'
 prev_tag = `git describe --abbrev=0 --tags`.strip
 
-# use the previous tag if we've told it to
-if false
+unless ARGV[0] == "HEAD"
   this_tag = prev_tag
   prev_tag = `git describe --abbrev=0 --tags #{this_tag}^`.strip
 end
@@ -57,7 +59,6 @@ end
 
 def add_attachment(store, title, data)
   return if data.nil? || data.length == 0
-  # TODO: use UTF symbol for bullet point
   data.map! do |line|
     line.split("\n").map(&:strip).join("\n  ")
   end
@@ -95,9 +96,18 @@ def format(commit)
       end
     end.join(', ')
   issues ||= "(no issues)"
-  time = "(no time)"
+  time =
+    if commit[:times].empty?
+      "(no time)"
+    else
+      seconds =
+        commit[:times].map do |data|
+          ChronicDuration.parse(data)
+        end.reduce(:+)
+      ChronicDuration.output(seconds)
+    end
   <<-eos
-    #{commit[:date]} #{commit[:message]} (#{link})
+    #{commit[:date]} _#{commit[:message]}_ (#{link})
     #{issues} | #{commit[:authors].join(', ')} | #{time}
   eos
 end
@@ -165,5 +175,4 @@ payload =
     attachments: attachments
   }
 
-# submit payload to Slack
 puts payload.to_json
