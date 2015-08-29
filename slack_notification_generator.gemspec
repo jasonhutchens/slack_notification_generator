@@ -31,8 +31,9 @@ Gem::Specification.new do |s|
     "VERSION",
     "bin/slack_notification_generator",
     "hack.rb",
-    "lib/main.rb",
-    "lib/slack_notification_generator.rb"
+    "lib/slack_notification_generator.rb",
+    "lib/slack_notification_generator/main.rb",
+    "slack_notification_generator.gemspec"
   ]
   s.homepage = "http://github.com/JasonHutchens/slack_notification_generator"
   s.licenses = ["UNLICENSE"]
