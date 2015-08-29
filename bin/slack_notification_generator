@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+require 'slack_notification_generator'
