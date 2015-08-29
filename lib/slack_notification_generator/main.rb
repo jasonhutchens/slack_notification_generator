@@ -64,7 +64,7 @@ def add_attachment(store, title, data)
   store <<
     {
       title: title,
-      text: data.map { |l| "* #{l}" }.join("\n")
+      text: data.map { |l| "• #{l}" }.join("\n")
     }
 end
 
