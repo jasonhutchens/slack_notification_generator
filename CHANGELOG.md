@@ -1,5 +1,8 @@
 # Change Log
 
+## [v0.1.0](https://github.com/jasonhutchens/slack_notification_generator/tree/v0.1.0) (2015-08-29)
+[Full Changelog](https://github.com/jasonhutchens/slack_notification_generator/compare/0.1.0...v0.1.0)
+
 ## [0.1.0](https://github.com/jasonhutchens/slack_notification_generator/tree/0.1.0) (2015-08-29)
 
 
