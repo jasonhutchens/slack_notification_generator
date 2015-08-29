@@ -99,7 +99,7 @@ class SlackNotificationGenerator
     `curl -X POST --data-urlencode 'payload=#{payload.to_json}' #{ENV['SLACK_HOOK']}`
   end
 
-  def extract_commits(blob)
+  def self.extract_commits(blob)
     commits = []
     commit = nil
     blob.split("\n").map(&:strip).each do |line|
@@ -125,7 +125,7 @@ class SlackNotificationGenerator
     commits
   end
 
-  def add_attachment(store, title, data)
+  def self.add_attachment(store, title, data)
     return if data.nil? || data.length == 0
     data.map! do |line|
       line.split("\n").map(&:strip).join("\n  ")
@@ -137,7 +137,7 @@ class SlackNotificationGenerator
       }
   end
 
-  def format(commit)
+  def self.format(commit)
     commit[:authors] ||= [commit[:author]].compact
     commit[:issues] ||= [commit[:issue]].compact
     commit[:times] ||= [commit[:time]].compact
