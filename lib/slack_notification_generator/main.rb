@@ -28,10 +28,12 @@ class SlackNotificationGenerator
     this_tag = 'HEAD'
     prev_tag = `git describe --abbrev=0 --tags`.strip
 
-    unless ARGV[0] == "HEAD"
+    if ARGV.select { |arg| arg == "HEAD" }.empty?
       this_tag = prev_tag
       prev_tag = `git describe --abbrev=0 --tags #{this_tag}^`.strip
     end
+
+    server = ARGV.select { |arg| arg != "HEAD" }.first
 
     commits = []
     commit = nil
@@ -85,14 +87,20 @@ class SlackNotificationGenerator
     attachments = []
     add_attachment(attachments, "Pull Requests", pull_requests)
     add_attachment(attachments, "Other Commits", other_commits)
-    exit if attachments.length == 0
+    return if attachments.length == 0
+
+    message = "*#{[ENV['SLACK_NAME'], env].compact.join(' ')} Release*"
+    if server
+      name = server.gsub(/^http.*\/\//, "").gsub(/\/$/, '')
+      message << " (<#{server}|#{name})>"
+    end
 
     payload =
       {
         username: ENV['SLACK_USER'] || 'Notification',
         icon_emoji: ENV['SLACK_ICON'] || ':bell:',
         channel: ENV['SLACK_CHAN'] || '#general',
-        text: "*#{[ENV['SLACK_NAME'], env].compact.join(' ')} Release*",
+        text: message,
         attachments: attachments
       }
 
@@ -182,7 +190,7 @@ class SlackNotificationGenerator
       commit[:message] = commit[:message][0, 50] + "..."
     end
     <<-eos
-      #{link} #{commit[:message]} [#{extras}]
+      #{link} #{commit[:message]} (#{extras})
     eos
   end
 end

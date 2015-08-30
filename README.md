@@ -4,7 +4,8 @@
 Slack Notification Generator
 ============================
 
-Sends a notification to a Slack channel to indicate that a branch of your project has just been deployed by your CI system.
+Sends a notification to a Slack channel to indicate that a branch of your
+project has just been deployed by your CI system.
 
 Usage
 -----
@@ -23,10 +24,17 @@ Define the following environments in your CI system.
 When your CI system deploys your project, run:
 
 ```
-$ slack_notification_generator [HEAD]
+$ slack_notification_generator <server> [HEAD]
 ```
 
-Specify an argument of `HEAD` if you want to generate a notification relative to the latest tag. Otherwise it will be assumed that you want to generate a notification relative to the most recent pair of tags (for example, you may have tagged `master` before triggering a deploy to production).
+Specify an argument of `HEAD` if you want to generate a notification relative to
+the latest tag. Otherwise it will be assumed that you want to generate a
+notification relative to the most recent pair of tags (for example, you may have
+tagged `master` before triggering a deploy to production).
+
+Specify a `server` URL if you'd like to include a link to the URL as part of the
+notification title. This makes it easier for people reading the notification to
+immediately click through to see the results of the deployment.
 
 Assumptions
 -----------
