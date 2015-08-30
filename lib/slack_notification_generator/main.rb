@@ -92,7 +92,7 @@ class SlackNotificationGenerator
     message = "*#{[ENV['SLACK_NAME'], env].compact.join(' ')} Release*"
     if server
       name = server.gsub(/^http.*\/\//, "").gsub(/\/$/, '')
-      message << " (<#{server}|#{name})>"
+      message << " (<#{server}|#{name}>)"
     end
 
     payload =
