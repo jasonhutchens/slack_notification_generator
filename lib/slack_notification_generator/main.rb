@@ -104,7 +104,7 @@ class SlackNotificationGenerator
         attachments: attachments
       }
 
-    `curl -X POST --data-urlencode 'payload=#{payload.to_json}' #{ENV['SLACK_HOOK']}`
+    `curl -X POST --data-urlencode 'payload=#{payload.to_json.gsub("'", "''")}' #{ENV['SLACK_HOOK']}`
   end
 
   def self.extract_commits(blob)
