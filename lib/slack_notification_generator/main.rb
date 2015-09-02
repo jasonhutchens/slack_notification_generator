@@ -104,7 +104,7 @@ class SlackNotificationGenerator
         attachments: attachments
       }
 
-    `curl -X POST --data-urlencode 'payload=#{payload.to_json.gsub("'", "''")}' #{ENV['SLACK_HOOK']}`
+    `curl -X POST --data-urlencode 'payload=#{payload.to_json.gsub("'", "'\"'\"'")}' #{ENV['SLACK_HOOK']}`
   end
 
   def self.extract_commits(blob)
@@ -186,6 +186,7 @@ class SlackNotificationGenerator
         ChronicDuration.output(seconds)
       end
     extras = [issues, commit[:authors].join(', '), time].compact.join(', ')
+    commit[:message] = "(no message)" if commit[:message].nil?
     if commit[:message].length > 50
       commit[:message] = commit[:message][0, 50] + "..."
     end
