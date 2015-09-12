@@ -89,7 +89,12 @@ class SlackNotificationGenerator
     add_attachment(attachments, "Other Commits", other_commits)
     return if attachments.length == 0
 
-    message = "*#{[ENV['SLACK_NAME'], env].compact.join(' ')} Release*"
+    version = ""
+    if this_tag != 'HEAD'
+      version = " v#{this_tag}"
+    end
+
+    message = "*#{[ENV['SLACK_NAME'], env].compact.join(' ')} Release#{version}*"
     if server
       name = server.gsub(/^http.*\/\//, "").gsub(/\/$/, '')
       message << " (<#{server}|#{name}>)"
