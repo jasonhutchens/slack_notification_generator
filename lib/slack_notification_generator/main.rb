@@ -186,7 +186,7 @@ class SlackNotificationGenerator
       else
         seconds =
           commit[:times].map do |data|
-            ChronicDuration.parse(data)
+            ChronicDuration.parse(data) || 0
           end.reduce(:+)
         ChronicDuration.output(seconds)
       end
