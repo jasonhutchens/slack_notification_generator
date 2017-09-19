@@ -23,6 +23,21 @@ class SlackNotificationGenerator
         'Development'
       end
 
+    attachments = []
+
+    if ARGV[0] =~ /^:/
+      payload =
+        {
+          username: ENV['SLACK_USER'] || 'Notification',
+          icon_emoji: ARGV[0],
+          channel: ENV['SLACK_CHAN'] || '#general',
+          text: ARGV[1..-1].join(' '),
+          attachments: attachments
+        }
+      retval = `curl -X POST --data-urlencode 'payload=#{payload.to_json.gsub("'", "'\"'\"'")}' #{ENV['SLACK_HOOK']}`
+      return retval
+    end
+
     changelog = []
 
     this_tag = 'HEAD'
@@ -84,7 +99,6 @@ class SlackNotificationGenerator
     end
     other_commits.map! { |commit| format(commit) }
 
-    attachments = []
     add_attachment(attachments, "Pull Requests", pull_requests)
     add_attachment(attachments, "Other Commits", other_commits)
     return if attachments.length == 0
